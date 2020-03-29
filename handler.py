@@ -1,7 +1,7 @@
 import json
 
 
-def hello(event, context):
+def ping(event, context):
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
         "input": event
@@ -9,7 +9,7 @@ def hello(event, context):
 
     response = {
         "statusCode": 200,
-        "body": json.dumps(body)
+        "body": "PONG"
     }
 
     return response
