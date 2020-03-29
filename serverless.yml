@@ -5,6 +5,20 @@ provider:
   runtime: python3.7
   environment:
     CONNECTIONS_TABLE: serverless-chat_Connections
+    MESSAGES_TABLE: serverless-chat_Messages
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:BatchGetItem"
+        - "dynamodb:BatchWriteItem"
+        - "dynamodb:Scan"
+        - "dynamodb:Query"
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:*:"
 
 functions:
   ping:
@@ -28,3 +42,22 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.CONNECTIONS_TABLE}
+
+    MessagesDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: Room
+            AttributeType: S
+          - AttributeName: Index
+            AttributeType: N
+        KeySchema:
+          - AttributeName: Room
+            KeyType: HASH
+          - AttributeName: Index
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.MESSAGES_TABLE}
+
+plugins:
+  - serverless-python-requirements
