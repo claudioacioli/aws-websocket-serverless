@@ -26,7 +26,7 @@ provider:
         - "dynamodb:Scan"
         - "dynamodb:Query"
       Resource:
-        - "arn:aws:dynamodb:us-east-1:*:"
+        - "arn:aws:dynamodb:us-east-1:*:********"
 
 functions:
   ping:
