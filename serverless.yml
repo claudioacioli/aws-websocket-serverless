@@ -3,6 +3,8 @@ service: serverless-chat
 provider:
   name: aws
   runtime: python3.7
+  environment:
+    CONNECTIONS_TABLE: serverless-chat_Connections
 
 functions:
   ping:
@@ -12,3 +14,17 @@ functions:
           path: ping
           method: get
 
+resources:
+  Resources:
+
+    ConnectionsDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: ConnectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ConnectionId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.CONNECTIONS_TABLE}
