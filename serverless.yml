@@ -1,5 +1,13 @@
 service: serverless-chat
 
+plugin:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    noDeploy: []
+
 provider:
   name: aws
   runtime: python3.7
