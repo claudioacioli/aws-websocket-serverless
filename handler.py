@@ -10,7 +10,7 @@ logger.setLevel(logging.DEBUG)
 messages_table = os.getenv("MESSAGES_TABLE")
 connections_table = os.getenv("CONNECTIONS_TABLE")
 dynamodb = boto3.resource("dynamodb")
-
+endpoint = os.getenv('WEBSOCKET_API_ENDPOINT')
 
 def ping(event, context):
     logger.info("Table name: " + table_name)
@@ -62,3 +62,21 @@ def connection_manager(event, context):
         return {"statusCode": 200, "body": "Unrecognized eventType."}
 
 
+def _get_body(event):
+    try:
+        return json.loads(event.get("body", ""))
+    except:
+        logger.debug("event body could not be JSON decoded.")
+
+
+def send_message(event, context):
+    table = dynamodb.Table(connections_table)
+    response = table.scan(ProjectionExpression="ConnectionId")
+    connections = response.get("Items", [])
+    for c in connections:
+        logger.debug(c.get("ConnectionId", ""))
+        gatewayapi = boto3.client("apigatewaymanagementapi", \
+                endpoint_url = endpoint)
+        gatewayapi.post_to_connection(ConnectionId=c.get("ConnectionId", ""),
+                Data=json.dumps({"cotacao": "10"}).encode("utf-8"))
+    return {"statusCode": 200, "body": "Message sent to all connections."}
